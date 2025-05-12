@@ -1,0 +1,90 @@
+% motor_model.m
+% DC motor open-loop simulation
+
+% Motor parameters (simplified)
+Kt = 0.07;
+R = 0.00208;
+B = 0.00425;
+
+% Transfer function: G(s) = Kt / (R*s + B)
+num = [Kt];
+den = [R B];
+motor_tf = tf(num, den);
+
+% Step response
+figure;
+step(motor_tf);
+title('Figure 1: Open-Loop Step Response of DC Motor');
+xlabel('Time (s)');
+ylabel('Angular Velocity (rad/s)');
+grid on;
+
+% Save figure (optional)
+saveas(gcf, 'figures/figure1_open_loop_response.png');
+
+simulink_model.slx
+
+% closed_loop_response.m
+% Closed-loop DC motor response with Kp = 20
+
+% Motor TF
+Kt = 0.07;
+R = 0.00208;
+B = 0.00425;
+motor_tf = tf([Kt], [R B]);
+
+% Apply proportional control (Kp = 20)
+Kp = 20;
+closed_loop = feedback(Kp * motor_tf, 1);
+
+% Step response
+figure;
+step(closed_loop);
+title('Figure 3: Closed-Loop Response (Kp = 20)');
+xlabel('Time (s)');
+ylabel('Angular Velocity (rad/s)');
+grid on;
+
+% Save figure
+saveas(gcf, 'figures/figure3_closed_loop_response_kp20.png');
+
+% frequency_analysis.m
+% Bode and Nyquist plots of the DC motor transfer function
+
+% Motor transfer function
+Kt = 0.07;
+R = 0.00208;
+B = 0.00425;
+motor_tf = tf([Kt], [R B]);
+
+% BODE PLOT
+figure;
+bode(motor_tf);
+grid on;
+title('Figure 4: Bode Plot of DC Motor');
+xlabel('Frequency (rad/s)');
+ylabel('Magnitude / Phase');
+saveas(gcf, 'figures/figure4_bode_plot.png');
+
+% NYQUIST PLOT
+figure;
+nyquist(motor_tf);
+grid on;
+title('Figure 5: Nyquist Plot of DC Motor');
+xlabel('Real');
+ylabel('Imaginary');
+saveas(gcf, 'figures/figure5_nyquist_plot.png');
+
+% run_all.m
+% Run all simulations and export plots
+
+disp("Running open-loop model...");
+run('motor_model.m');
+
+disp("Running closed-loop model...");
+run('closed_loop_response.m');
+
+disp("Generating frequency-domain plots...");
+run('frequency_analysis.m');
+
+disp("All simulations complete. Figures saved in /figures.");
